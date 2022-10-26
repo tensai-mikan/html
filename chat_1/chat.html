@@ -1,0 +1,34 @@
+<style>
+#chat{
+overflow: auto;
+height: 50vh;
+width: auto;
+}
+
+.elem{
+
+}
+</style>
+<div id="chat">
+  <div class="elem">
+    <p></p>
+  </div>
+  
+</div>
+
+<input type="text" id="txt">
+<button id="submit">追加</button>
+
+<script>
+var chat = document.getElementById("chat");
+var txt = document.getElementById("txt");
+var submit = document.getElementById("submit");
+
+submit.addEventListener("click", function(){
+  p = document.createElement("p");
+  p.innerHTML = txt.value;
+  chat.appendChild(p);
+  txt.value = "";
+});
+
+</script>
