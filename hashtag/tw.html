@@ -1,0 +1,80 @@
+
+<style>
+.textbox{
+width: 350px;
+height: 100px;
+margin: 5px;
+padding: 3px;
+outline: none;
+border: solid 3px #aaa;
+border-radius: 5px;
+}
+
+.textbox:hover{
+border: solid 3px #777;
+}
+
+.textbox:focus{
+border: solid 3px #2765a3;
+}
+
+.hashtag{
+color: #176dc2;
+}
+</style>
+
+<h2>twitterみたいに # の部分の色を変えるテキストボックス</h2>
+<p>※なぜか完ぺきではないため、テキストボックス外に反映。<br>
+実際のtwitterも同様の方法で、URLと@の色変更もしていると思われる。</p>
+
+<div class="textbox" contenteditable="true"></div>
+<span id="e"></span>
+
+
+<script>
+var txt = document.querySelectorAll(".textbox");   //テキストボックスを変数に入れる。
+var hash = "#";    //ここから色が変わる！
+
+var separate = [" ", "　", "#", ",", ";", ":", ".", "\n"];  //区切り文字(ハッシュタグの終わり)
+
+
+for(let i=0; i<txt.length; i++){                        //テキストボックスは1つとは限らないので、繰り返し処理で一括設定
+    txt[i].addEventListener("keyup", (e) => {           //キーが入力(実際はボタンを押して、離した瞬間)されたら
+        let contents = txt[i].innerHTML;                //今入力したテキストを変数へ。
+        //txt[i].innerHTML = colorHash(contents);       //ここで色変更(期待通りに動かなかったので、コメント)
+        document.getElementById("e").innerHTML = colorHash(contents);   //仮にこっち。
+    }, false);
+}
+
+
+
+//ここが根幹となる部分
+
+function colorHash(str){
+    let pos = str.indexOf(hash);  //#の位置が数字で。(左から4番目なら、3が入る (n番目-1) )
+    let end;                      //区切り文字の位置
+    let endw = new Array();       //それぞれの区切り文字の位置を格納するための配列
+    let left, tag, right;         //ハッシュタグの左、右、中身を入れる一時的な変数。
+
+    while (pos !== -1){  //#が見つかったら、
+        for(let i=0; i<separate.length; i++){             //複数の区切り文字がある場合の処理。
+            endw[i] = str.indexOf(separate[i], pos + 1);
+            if(endw[i] === -1)                            //文字がないとき、左から何番目の数字がでてくるのではなく、-1が出るので、なんとか処理。
+                endw[i] = str.length;
+        }
+        end = Math.min(...endw);                          //複数ある区切り文字のうち、一番#に近いものを採用。
+        
+        left = str.slice(0, pos);                         //左は、最初から#の位置まで。
+        tag = str.slice(pos, end);                        //真ん中は、#から区切り文字まで。
+        right = str.slice(end);                           //右は、区切り文字から最後まで。
+
+        str = left + "<span class=\"hashtag\">" + tag + "</span>" + right;  //←こうやってspanタグで挟む。
+
+        pos = str.indexOf(hash, pos + 29 + 1);            //次のハッシュタグのを探す。whileへ戻る。
+    }
+    
+    return str;
+}
+
+
+</script>
